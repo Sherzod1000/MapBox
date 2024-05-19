@@ -4,6 +4,7 @@ import App from "./App.jsx";
 import "./index.css";
 import { NextUIProvider } from "@nextui-org/react";
 import "mapbox-gl/dist/mapbox-gl.css";
+import '@mapbox/mapbox-gl-draw/dist/mapbox-gl-draw.css'
 import { ToolProvider } from "./context/ToolContext.jsx";
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
