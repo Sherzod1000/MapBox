@@ -1,4 +1,4 @@
-import { nextui } from "@nextui-org/react";
+import {nextui} from '@nextui-org/react'
 
 export default {
   content: [

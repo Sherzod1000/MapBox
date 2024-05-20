@@ -1,51 +1,57 @@
 import mapboxgl from "mapbox-gl";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
-export function mapSettings(location, zoom, containerRef, setCurrentInfo) {
+export function mapSettings(currentInfo, zoom, containerRef, setCurrentInfo) {
   const map = new mapboxgl.Map({
     container: containerRef.current,
-    style: "mapbox://styles/mapbox/satellite-streets-v11",
-    center: [location.longitude, location.latitude],
+    style: 'mapbox://styles/mapbox/satellite-v9',
+    center: [currentInfo.longitude, currentInfo.latitude],
     zoom,
   });
 
-  map.on("load", () => {
-    map.addLayer({
-      id: "3d-buildings",
-      source: "composite",
-      "source-layer": "building",
-      filter: ["==", "extrude", "true"],
-      type: "fill-extrusion",
-      minzoom: 15,
-      paint: {
-        "fill-extrusion-color": "#aaa",
-
-        // Use an 'interpolate' expression to add a smooth transition effect to the buildings' heights
-        "fill-extrusion-height": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          15,
-          0,
-          15.05,
-          ["get", "height"],
-        ],
-        "fill-extrusion-base": [
-          "interpolate",
-          ["linear"],
-          ["zoom"],
-          15,
-          0,
-          15.05,
-          ["get", "min_height"],
-        ],
-        "fill-extrusion-opacity": 0.6,
-      },
-    });
-  });
 
   const nav = new mapboxgl.NavigationControl();
   map.addControl(nav, "top-right");
-  const draw = new MapboxDraw();
+  const draw = new MapboxDraw({
+    displayControlsDefault: true,
+    controls: {
+      polygon: true,
+      trash: true,
+    },
+    styles: [
+      {
+        'id': 'gl-draw-polygon-fill',
+        'type': 'fill',
+        'paint': {
+          'fill-color': '#6e599f',
+          'fill-opacity': 0.4
+        }
+      },
+      {
+        'id': 'gl-draw-polygon-stroke',
+        'type': 'line',
+        'paint': {
+          'line-color': '#6e599f',
+          'line-width': 2
+        },
+      },
+      {
+        'id': 'gl-draw-point',
+        'type': 'circle',
+        'paint': {
+          'circle-radius': 8, // Point radius (width)
+          'circle-color': '#aaa' // Point color
+        }
+      },
+      {
+        'id': 'gl-draw-point-active',
+        'type': 'circle',
+        'paint': {
+          'circle-radius': 8, // Active point radius (width)
+          'circle-color': '#ccc' // Active point color
+        }
+      }
+    ]
+  });
   map.addControl(draw, "top-left");
 
   map.on("move", () => {
