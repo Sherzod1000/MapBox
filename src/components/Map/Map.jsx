@@ -29,7 +29,7 @@ export function Map() {
         }
         ref={mapContainerRef}
       ></div>
-      {
+      {/* {
         outlineBorderCoordinates?.length > 0 && (<Source
           id="border"
           type="geojson"
@@ -58,7 +58,7 @@ export function Map() {
             }}
           />
         </Source>)
-      }
+      } */}
     </>
   );
 }
