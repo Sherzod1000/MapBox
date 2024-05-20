@@ -1,6 +1,7 @@
 import mapboxgl from "mapbox-gl";
 import MapboxDraw from "@mapbox/mapbox-gl-draw";
-export function mapSettings(currentInfo, zoom, containerRef, setCurrentInfo) {
+
+export function mapSettings(currentInfo, zoom, containerRef, setCurrentInfo, outlineBorderCoordinates, setOutlineBorderCoordinates) {
   const map = new mapboxgl.Map({
     container: containerRef.current,
     style: 'mapbox://styles/mapbox/satellite-v9',
@@ -8,6 +9,12 @@ export function mapSettings(currentInfo, zoom, containerRef, setCurrentInfo) {
     zoom,
   });
 
+  function updateDraw(e) {
+    const offsetValue = 0.1;
+    const coords = draw.getAll()?.features?.[0].geometry?.coordinates?.[0];
+    const offsettedCoords = coords.map(([lng, lat]) => ([lng + offsetValue, lat + offsetValue]))
+    setOutlineBorderCoordinates(() => offsettedCoords);
+  }
 
   const nav = new mapboxgl.NavigationControl();
   map.addControl(nav, "top-right");
@@ -53,6 +60,7 @@ export function mapSettings(currentInfo, zoom, containerRef, setCurrentInfo) {
     ]
   });
   map.addControl(draw, "top-left");
+  console.log("Draw", draw?.getAll());
 
   map.on("move", () => {
     setCurrentInfo((prev) => ({
@@ -62,5 +70,9 @@ export function mapSettings(currentInfo, zoom, containerRef, setCurrentInfo) {
       zoom: map.getZoom().toFixed(2),
     }));
   });
-  return { map };
+
+  map.on("draw.create", updateDraw);
+  map.on("draw.delete", updateDraw);
+  map.on("draw.update", updateDraw);
+  return {map};
 }
