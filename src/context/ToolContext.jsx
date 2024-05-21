@@ -13,7 +13,7 @@ export function ToolProvider({children}) {
   const [currentInfo, setCurrentInfo] = useState({
     longitude: 69.2401,
     latitude: 41.2995,
-    zoom: 15,
+    zoom: 15.00,
   });
   const [outlineBorderCoordinates, setOutlineBorderCoordinates] = useState([]);
   return (
