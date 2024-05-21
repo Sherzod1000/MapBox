@@ -2,3 +2,26 @@
 @tailwind components;
 @tailwind utilities;
 
+.mapbox-gl-draw_ctrl-draw-btn {
+    width: 4rem !important;
+    height: 4rem !important;
+    font-size: 24px !important;
+    background-size: 24px !important;
+}
+
+.mapboxgl-ctrl-zoom-in,
+.mapboxgl-ctrl-zoom-out,
+.mapboxgl-ctrl-compass {
+    width: 3rem !important;
+    height: 3rem !important;
+    font-size: 18px !important;
+    width: 64px !important;
+    height: 64px !important;
+}
+
+.mapboxgl-ctrl-icon {
+    background-size: 38px !important;
+}
+
+.active {
+}
