@@ -1,8 +1,8 @@
-import { createContext, useState } from "react";
+import {createContext, useState} from "react";
 
 export const ToolContext = createContext();
 
-export function ToolProvider({ children }) {
+export function ToolProvider({children}) {
   const [tools, setTools] = useState({
     select: false,
     point: false,
@@ -15,6 +15,7 @@ export function ToolProvider({ children }) {
     latitude: 41.2995,
     zoom: 15,
   });
+  const [outlineBorderCoordinates, setOutlineBorderCoordinates] = useState([]);
   return (
     <ToolContext.Provider
       value={{
@@ -24,6 +25,8 @@ export function ToolProvider({ children }) {
         setHelperTools,
         currentInfo,
         setCurrentInfo,
+        outlineBorderCoordinates,
+        setOutlineBorderCoordinates
       }}
     >
       {children}
