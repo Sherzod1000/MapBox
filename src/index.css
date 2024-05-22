@@ -23,5 +23,31 @@
     background-size: 38px !important;
 }
 
-.active {
+
+@media only screen and (max-width: 650px) {
+
+    .mapbox-gl-draw_ctrl-draw-btn {
+        width: 2rem !important;
+        height: 2rem !important;
+        font-size: 18px !important;
+        background-size: 18px !important;
+    }
+
+    .mapboxgl-ctrl-zoom-in,
+    .mapboxgl-ctrl-zoom-out,
+    .mapboxgl-ctrl-compass {
+        width: 2rem !important;
+        height: 2rem !important;
+        font-size: 14px !important;
+        width: 32px !important;
+        height: 32px !important;
+    }
+
+    .mapboxgl-ctrl-icon {
+        background-size: 24px !important;
+    }
+
+    .info li {
+        font-size: 14px !important;
+    }
 }

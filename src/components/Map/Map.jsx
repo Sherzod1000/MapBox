@@ -6,7 +6,7 @@ import {
   configureInfo,
   initializeControlTools,
   initializeMap,
-  updateDraw,
+  updateFeature,
 } from './utils/index.js';
 
 export function Map() {
@@ -29,11 +29,24 @@ export function Map() {
         ...configureInfo(map),
       }));
     });
+    let selectedFeatureId = null;
 
-    map.on('draw.create', (e) => updateDraw(e, draw, map));
-    map.on('draw.delete', (e) => updateDraw(e, draw, map));
-    map.on('draw.update', (e) => updateDraw(e, draw, map));
-    map.on('draw.render', (e) => updateDraw(e, draw, map));
+    map.on('draw.modechange', function (e) {
+      console.log('Mode changed');
+      if (e.mode === 'direct_select') {
+        const selectedFeatures = draw.getSelected().features;
+        if (selectedFeatures.length > 0) {
+          selectedFeatureId = selectedFeatures[0].id;
+          map.on('mousemove', () =>
+            updateFeature(map, draw, selectedFeatureId)
+          );
+        }
+      } else {
+        map.off('mousemove', () => updateFeature(map, draw, selectedFeatureId));
+        selectedFeatureId = null;
+      }
+    });
+
     return () => map.remove();
   }, []);
   return (

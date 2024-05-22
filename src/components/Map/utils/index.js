@@ -2,57 +2,48 @@ import * as turf from '@turf/turf';
 import mapboxgl from 'mapbox-gl';
 import MapboxDraw from '@mapbox/mapbox-gl-draw';
 
-export function updateDraw(e, draw, map) {
-  const coords = draw?.getAll()?.features?.[0]?.geometry?.coordinates?.[0];
-  const mainPolygon = turf.polygon([coords]);
-  const gapSize = 8;
-  const borderSize = 200;
-
-  const outerBuffer = turf.buffer(mainPolygon, gapSize + borderSize, {
-    units: 'meters',
-  });
-  const innerBuffer = turf.buffer(mainPolygon, gapSize, { units: 'meters' });
-  const borderPolygon = turf.difference(outerBuffer, innerBuffer);
-
-  // Add the main polygon to the map
-
-  // Add the border polygon to the map
-  if (map.getSource('borderPolygon')) {
-    const allLayers = map.getStyle().layers;
-    allLayers.forEach((layer) => {
-      if (layer.source === 'borderPolygon') {
-        map.removeLayer(layer.id);
-      }
+export function updateFeature(map, draw, selectedFeatureId) {
+  if (selectedFeatureId) {
+    const feature = draw.get(selectedFeatureId);
+    const polygonSize = 200; // meters
+    // Create a buffer around the polygon
+    const buffer = turf.buffer(feature, polygonSize, {
+      units: 'meters',
     });
-    map.removeSource('borderPolygon');
+    console.log('Buffer', buffer);
+    const difference = turf.difference(buffer, feature);
+    // Add or update the buffer layer on the map
+    if (map.getSource('buffer')) {
+      map.getSource('buffer').setData(difference);
+    } else {
+      map.addSource('buffer', {
+        type: 'geojson',
+        data: difference,
+      });
+
+      map.addLayer({
+        id: 'buffer',
+        type: 'fill',
+        source: 'buffer',
+        layout: {},
+        paint: {
+          'fill-color': '#f00',
+          'fill-opacity': 0.3,
+        },
+      });
+      map.addLayer({
+        id: 'buffer-outline',
+        type: 'line',
+        source: 'buffer',
+        layout: {},
+        paint: {
+          'line-color': '#f00',
+          'line-width': 3,
+          'line-opacity': 0.7,
+        },
+      });
+    }
   }
-
-  map.addSource('borderPolygon', {
-    type: 'geojson',
-    data: borderPolygon,
-  });
-
-  map.addLayer({
-    id: 'borderPolygonLayer',
-    type: 'fill',
-    source: 'borderPolygon',
-    layout: {},
-    paint: {
-      'fill-color': '#f00',
-      'fill-opacity': 0.18,
-    },
-  });
-  map.addLayer({
-    id: 'borderPolygonLayerOutlineBorder',
-    type: 'line',
-    source: 'borderPolygon',
-    layout: {},
-    paint: {
-      'line-color': '#f00',
-      'line-opacity': 0.8,
-      'line-width': 3.5,
-    },
-  });
 }
 
 export const drawStyles = [
@@ -61,7 +52,7 @@ export const drawStyles = [
     type: 'fill',
     paint: {
       'fill-color': '#6e599f',
-      'fill-opacity': 0.3,
+      'fill-opacity': 0.4,
     },
   },
   {
@@ -76,15 +67,15 @@ export const drawStyles = [
     id: 'gl-draw-point',
     type: 'circle',
     paint: {
-      'circle-radius': 7, // Point radius (width)
-      'circle-color': '#aaa', // Point color
+      'circle-radius': 10, // Point radius (width)
+      'circle-color': '#fff', // Point color
     },
   },
   {
     id: 'gl-draw-point-active',
     type: 'circle',
     paint: {
-      'circle-radius': 8, // Active point radius (width)
+      'circle-radius': 10, // Active point radius (width)
       'circle-color': '#ccc', // Active point color
     },
   },
